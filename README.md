@@ -1,4 +1,3 @@
-# AWS-Setup
 # AWS_SetUp
 
 ## Setting up environment
@@ -214,123 +213,96 @@ git config --global user.email 'your email'
 ssh -T git@github.com
 ```
 
-### Jupyter notebook setup
+### clone github repository to your vitual machine
 
-###############################################################################################
+* __git clone [repository url]__, which you can find here(__Note:remember switching to ssh not HTTP__):
 
-* Create a new account on __[aws](aws.amazon.com/)__.
-* Sign in to Console.
-* Search __EC2__ get to EC2 Dashboard:
-* Search __EC2__ go to EC2 Dashboard:
-<img src='image/search_ec2.png'>
+* Here is an quick example which we clone this AWS_Setup repository to virtual machine:
+```
+[ec2-user@ip-172-31-89-212 ~]$ git clone git@github.com:globalaiorg/AWS_SetUp.git
+Cloning into 'AWS_SetUp'...
+Warning: Permanently added the RSA host key for IP address '192.30.253.112' to the list of known hosts.
+remote: Enumerating objects: 103, done.
+remote: Counting objects: 100% (103/103), done.
+remote: Compressing objects: 100% (88/88), done.
+remote: Total 103 (delta 24), reused 8 (delta 0), pack-reused 0
+Receiving objects: 100% (103/103), 1.93 MiB | 20.22 MiB/s, done.
+Resolving deltas: 100% (24/24), done.
+```
 
-* Click __Key Pairs__:
-@@ -137,4 +137,21 @@ Hi globalaiorg! You've successfully authenticated, but GitHub does not provide s
-* Click __Import Key Pair__ and paste your __ssh keypair__ to __Public key contents__.
-<img src='image/aws_image.png'>
+* Check what is in your virtual machine:
+```
+[ec2-user@ip-172-31-89-212 ~]$ ls
+AWS_SetUp
+```
 
-### AWS EC2 virtual machine set up
+* Change directory to the folder AWS_Setup and check what is in the folder:
+```
+[ec2-user@ip-172-31-89-212 ~]$ cd AWS_SetUp/
+[ec2-user@ip-172-31-89-212 AWS_SetUp]$ ls
+README.md  image
+```
 
-* After you adding __ssh keypair__, go to __EC2 Dashboard__.
-* Click __Launch Instance__.
-* Click __AWS Market place__ at the right side.
-* Search __Conda__.
-* Press __Continue__.
-* Select __t2.micro__ (which should be default) and click __Next:Configure Instance Details__.
-* The several following settings are some more advanced settings, usually you can just click __Add Storate__.
-* Click __Add Tag__.
-* Click __Next:Configure Security Group__.
-* __THIS STEP IS IMPORTANT__: Change source to __Anywhere__ and click __Review and Launch__.
-* Ignore warning and click __Launch__.
-* Select your keypair(which you added in __ssh keypair step__, and click the check box(__Note: remember to select the right keypair especially when you are using Richard's account or you have several computers).__ Click __Launch__.
-* Go to the bottom of the webpage and click __View Instance__.
+### Start Jupyter notebook
 
-###############################################################################################
+* In your working folder(github folder) type in:
+```
+[ec2-user@ip-172-31-89-212 AWS_SetUp]$ jupyter notebook --no-browser --port=8999
+```
+* Here "port" is a virtual host address(which means it is not a host you can visit on your computer), the number 8999 can be any number you want but be sure remember what you typed in. Press __enter__ and you will see lots of sentence and you will see these line at once it finished:
+```
+    To access the notebook, open this file in a browser:
+        file:///home/ec2-user/.local/share/jupyter/runtime/nbserver-3000-open.html
+    Or copy and paste one of these URLs:
+        http://localhost:8999/?token=db9afe59652854941ca57cdf196ad7a43bbff8a0abb27bd9
+```
 
-### AWS EC2 virtual machine set up
+* Now open another __Terminal__, for windows user, your __babun__ should be located in C:/Users/you_name/.babun.
 
-* After you adding __ssh keypair__, go to __EC2 Dashboard__.
-* Click __Launch Instance__.
-* Click __AWS Market place__ at the right side.
-* Click __Launch Instance__:
-<img src='image/launch_instance.png'>
-
-* Click __AWS Market place__ at the right side:
-<img src='image/marketplace.png'>
-
-* Search __Conda__.
-<img src='image/conda.png'>
-
-* Press __Continue__.
-<img src='image/continue.png'>
-
-* Select __t2.micro__ (which should be default) and click __Next:Configure Instance Details__.
-* The several following settings are some more advanced settings, usually you can just click __Add Storate__.
-<img src='image/t2_micro.png'>
-
-* The several following settings are some more advanced settings, usually you can just click __Add Storage__.
-* Click __Add Tag__.
-* Click __Next:Configure Security Group__.
-* __THIS STEP IS IMPORTANT__: Change source to __Anywhere__ and click __Review and Launch__.
-<img src='image/security_group.png'>
-
-* Ignore warning and click __Launch__.
-* Select your keypair(which you added in __ssh keypair step__, and click the check box(__Note: remember to select the right keypair especially when you are using Richard's account or you have several computers).__ Click __Launch__.
-<img src='image/keypair.png'>
-
-* Go to the bottom of the webpage and click __View Instance__.
-
-
-###############################################################################################
-
-
-@@ -166,6 +166,53 @@ Hi globalaiorg! You've successfully authenticated, but GitHub does not provide s
-<img src='image/keypair.png'>
-
-* Go to the bottom of the webpage and click __View Instance__.
-* Click the __Instance__ you just created and check the information at the bottom side:
-<img src='image/ec2_info.png'>
-
-* Copy __Public DNS (IPv4)__.
-* Open a __Terminal__ and type:
+* In the new terminal, type in:
 ```
 ssh-add
 ```
-* __Note:if you are using windows do the following step, if you are using Mac or Linux ignore this step:__
+
+* If you are windows user and you have issue with permission, check the previous setups.
+
+* Type in:
 ```
-eval `ssh-agent -s`
-ssh-add
+ssh -A -L8999:Localhost:8999 ec2-user@[Public DNS]
 ```
 
-* Now type in the following in terminal and press __enter__.
+* __The second 8999 is the port number you create the jupyter notebook on your virtual machine, the first 8999 is the port number for the localhost on your computer, it can be different from the virtual localhost, it is import when you are working with multiple instances__.
+
+* Here is an example of different port numbers:
 ```
-ssh -A ec2-user@[paste the public DNS you just copied]
-```
-* My example is, you will be asked if you want to continue connecting, type in __yes__ and press __enter__:
-```
-FandeMacBook-Pro:~ fanliang$ ssh -A ec2-user@ec2-54-172-187-146.compute-1.amazonaws.com
-The authenticity of host 'ec2-54-172-187-146.compute-1.amazonaws.com (54.172.187.146)' can't be established.
-ECDSA key fingerprint is SHA256:YGwnEoB5YVo4L4PoH5w5XmrkzqMEI3XBORKyhYoVSX4.
-Are you sure you want to continue connecting (yes/no)? yes 
-Warning: Permanently added 'ec2-54-172-187-146.compute-1.amazonaws.com,54.172.187.146' (ECDSA) to the list of known hosts.
+FandeMacBook-Pro:~ fanliang$ ssh -A -9001:Localhost:8999 ec2-user@ec2-54-172-187-146.compute-1.amazonaws.com
+Last login: Wed Jul  3 15:40:25 2019 from amazon.com.ear2.newyork1.level3.net
+
        __|  __|_  )
        _|  (     /   Amazon Linux AMI
       ___|\___|___|
+
 https://aws.amazon.com/amazon-linux-ami/2018.03-release-notes/
 7 package(s) needed for security, out of 8 available
 Run "sudo yum update" to apply all updates.
 -bash: warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
 ```
-* Now you are in the __Virtual Machine__.
-* Type sudo yum install -y git to install git on your machine:
+
+* Remeber when you start a jupyter notebook in your virtual machine, you see this:
 ```
-[ec2-user@ip-172-31-89-212 ~]$ sudo yum install -y git
-```
-* Now you can redo the github setup process:
-```
-git config --global user.name 'yourname'
-git config --global user.email 'your email'
-ssh -T git@github.com
+    To access the notebook, open this file in a browser:
+        file:///home/ec2-user/.local/share/jupyter/runtime/nbserver-3000-open.html
+    Or copy and paste one of these URLs:
+        http://localhost:8999/?token=db9afe59652854941ca57cdf196ad7a43bbff8a0abb27bd9
 ```
 
-### Jupyter notebook setup
+* Copy the last line and paste in to the web browser(skip this step if you changed the port number):
+```
+http://localhost:8999/?token=db9afe59652854941ca57cdf196ad7a43bbff8a0abb27bd9
+```
+
+* Change the host number if you modified in the previous stop, ignore this step if you didn't.
+```
+http://localhost:9001/?token=db9afe59652854941ca57cdf196ad7a43bbff8a0abb27bd9
+```
+
